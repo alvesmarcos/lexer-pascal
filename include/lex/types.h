@@ -1,10 +1,12 @@
-// Autor: Marcos Alves
-// Data: 21 Fev 2017
+//============== types.h - Tipos de tokens ==============//
 //
-// module: type.h
-// Este arquivo contem todos os tipos possiveis, da linguagem pascal, para a
-// classificacao do token. Existe tambem uma funcao cujo objetivo e retornar
-// uma string com nome literal da constante passada por parametro.
+//               The pascc compiler
+//
+// Este arquivo possui todos os tipos de tokens especificados
+// na linguagem pascal, e uma funcao que retorna o nome
+// literal da constante.
+//
+//============== ------------------------- ==============//
 
 #ifndef PASCC_LEX_TYPES
 #define PASCC_LEX_TYPES
@@ -18,7 +20,8 @@ enum Type {
   kCommand,
   kRelOperator,
   kAddOperator,
-  kMulOperator
+  kMulOperator,
+  kEOF
 };
 
 inline const char* GetValueType(Type tp){
@@ -41,6 +44,8 @@ inline const char* GetValueType(Type tp){
       return "Additive operator";
     case kMulOperator:
       return "Multiplicative operator";
+    case kEOF:
+      return "EOF";
   }
 }
 
