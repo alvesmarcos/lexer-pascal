@@ -24,29 +24,31 @@ enum Type {
   kEOF
 };
 
-inline const char* GetValueType(Type tp){
-  switch (tp) {
-    case kKeyword:
-      return "Keyword";
-    case kIdentifier:
-      return "Identifier";
-    case kIntLiteral:
-      return "Integer literal";
-    case kRealLiteral:
-      return "Real literal";
-    case kDelimiter:
-      return "Delimiter";
-    case kCommand:
-      return "Command";
-    case kRelOperator:
-      return "Relational operator";
-    case kAddOperator:
-      return "Additive operator";
-    case kMulOperator:
-      return "Multiplicative operator";
-    case kEOF:
-      return "EOF";
-  }
-}
+// inline const char* GetValueType(Type t) {
+//   switch (t) {
+//     case kKeyword:
+//       return "Keyword";
+//     case kIdentifier:
+//       return "Identifier";
+//     case kIntLiteral:
+//       return "Integer literal";
+//     case kRealLiteral:
+//       return "Real literal";
+//     case kDelimiter:
+//       return "Delimiter";
+//     case kCommand:
+//       return "Command";
+//     case kRelOperator:
+//       return "Relational operator";
+//     case kAddOperator:
+//       return "Additive operator";
+//     case kMulOperator:
+//       return "Multiplicative operator";
+//     case kEOF:
+//       return "EOF";
+//     default:
+//       return nullptr;
+//   }
+// }
 
 #endif //PASCC_LEX_TYPES

@@ -12,7 +12,7 @@ set(CMAKE_CXX_STANDARD 14)
 include_directories(${LLVM_INCLUDE_DIRS})
 add_definitions(${LLVM_DEFINITIONS})
 
-set(SOURCE_FILES)
+set(SOURCE_FILES src/lex/scanner.cc include/lex/scanner.h include/lex/types.h)
 
 # Create a library called "pascc" which includes the source files.
 add_executable(pascc ${SOURCE_FILES})
