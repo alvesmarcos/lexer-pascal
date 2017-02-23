@@ -27,12 +27,15 @@ struct Token {
 
 class Scanner {
   public:
-    Scanner() = default;
+    Scanner(FILE* file);
+    ~Scanner();
     // Abre arquivo e classifica o simbolo encontrado
-    bool ReadToken(FILE* stream);
+    bool ReadToken();
     // Imprime todos os tokens do vector
     void PrintToken() const;
   private:
+    char GetNextChar();
+    FILE *stream;
     // Conjunto de tokens presente no arquivo
     std::vector<Token> token;
 };

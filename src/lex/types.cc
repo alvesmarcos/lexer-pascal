@@ -11,11 +11,11 @@
 const std::map<Type, const char*> kGetStrType {
                                   {Type::kKeyword, "Keyword"},
                                   {Type::kIdentifier, "Identifier"},
-                                  {Type::kIntLiteral, "Integer literal"},
+                                  {Type::kIntLiteral, "Int literal"},
                                   {Type::kRealLiteral, "Real literal"},
                                   {Type::kDelimiter, "Delimiter"},
                                   {Type::kCommand, "Command"},
-                                  {Type::kRelOperator, "Relational operator"},
-                                  {Type::kAddOperator, "Additive operator"},
-                                  {Type::kMulOperator, "Multiplicative operator"},
+                                  {Type::kRelOperator, "Rel operator"},
+                                  {Type::kAddOperator, "Add operator"},
+                                  {Type::kMulOperator, "Mult operator"},
                                   {Type::kEOF, "EOF"}};
