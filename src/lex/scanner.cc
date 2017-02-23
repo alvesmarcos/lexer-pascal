@@ -10,7 +10,7 @@
 
 unsigned int line = 1;
 char buffer;
-bool valid = false;
+bool is_buffer = false;
 
 inline bool IsKeyWord(const std::string& word) {
   if(word=="program" or word=="var" or word=="integer" or word=="real" or
@@ -26,8 +26,8 @@ Scanner::Scanner(FILE* file): stream(file) {}
 Scanner::~Scanner(){ fclose(stream); }
 
 char Scanner::GetNextChar() {
-  if(valid){
-    valid = false;
+  if(is_buffer){
+    is_buffer = false;
     return buffer;
   } else {
     return getc(this->stream);
@@ -48,14 +48,21 @@ bool Scanner::ReadToken() {
 
   while(not done){
     char ch = GetNextChar();
-
+    // ignora linha | isspace() nao captura apenas espacos em brancos
+    while(ch==' ')
+      ch = GetNextChar();
+    // incrementa o contador de linhas
+    while(ch=='\n'){
+      ++line;
+      ch = GetNextChar();
+    }
     switch (ch) {
       case '{': {
         while(ch!='}'){
           ch = GetNextChar();
           if(ch==EOF){
-            valid = true;
-            fprintf(stderr, "ERROR: Comentário esperado!\n");
+            is_buffer = true;
+            fprintf(stderr, "ERROR: Comentario esperado!\n");
             break;
           }
         }
@@ -80,7 +87,7 @@ bool Scanner::ReadToken() {
         if(ch=='=' or (ch=='>' and lexeme=="<"))
           lexeme += ch;
         else
-          valid = true;
+          is_buffer = true;
         this->token.push_back(Token{lexeme, line, Type::kRelOperator});
         break;
       }
@@ -94,12 +101,8 @@ bool Scanner::ReadToken() {
           this->token.push_back(Token{":=", line, Type::kCommand});
         } else {
           this->token.push_back(Token{":", line, Type::kDelimiter});
-          valid = true;
+          is_buffer = true;
         }
-        break;
-      }
-      case '\n':{
-        ++line;
         break;
       }
       case EOF: {
@@ -108,6 +111,31 @@ bool Scanner::ReadToken() {
         break;
       }
       default: {
+        if(isdigit(ch)){
+          Type type = Type::kIntLiteral;
+          std::string number(1, ch);
+          ch = GetNextChar();
+
+          while(isdigit(ch)){
+            number += ch;
+            ch = GetNextChar();
+          }
+          if(ch=='.') {
+            number += ch;
+            ch = GetNextChar();
+            if(not isdigit(ch)) return false;
+            type = kRealLiteral;
+            is_buffer = true;
+            do {
+              number += ch;
+              ch = GetNextChar();
+            } while(isdigit(ch));
+          }
+          this->token.push_back(Token{number, line, type});
+          is_buffer = true;
+        } else if (isalpha(ch)) {
+          //TODO
+        }
       }
     }
   }
