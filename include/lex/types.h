@@ -11,6 +11,8 @@
 #ifndef PASCC_LEX_TYPES
 #define PASCC_LEX_TYPES
 
+#include <map>
+
 enum Type {
   kKeyword,
   kIdentifier,
@@ -23,32 +25,6 @@ enum Type {
   kMulOperator,
   kEOF
 };
-
-// inline const char* GetValueType(Type t) {
-//   switch (t) {
-//     case kKeyword:
-//       return "Keyword";
-//     case kIdentifier:
-//       return "Identifier";
-//     case kIntLiteral:
-//       return "Integer literal";
-//     case kRealLiteral:
-//       return "Real literal";
-//     case kDelimiter:
-//       return "Delimiter";
-//     case kCommand:
-//       return "Command";
-//     case kRelOperator:
-//       return "Relational operator";
-//     case kAddOperator:
-//       return "Additive operator";
-//     case kMulOperator:
-//       return "Multiplicative operator";
-//     case kEOF:
-//       return "EOF";
-//     default:
-//       return nullptr;
-//   }
-// }
+extern const std::map<Type, const char*> kGetStrType;
 
 #endif //PASCC_LEX_TYPES

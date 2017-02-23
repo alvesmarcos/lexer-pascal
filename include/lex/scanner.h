@@ -20,6 +20,9 @@ struct Token {
   std::string lexeme;
   unsigned int line;
   Type type;
+
+  Token(std::string lex, unsigned int lin, Type tp):
+  lexeme(lex), line(lin), type(tp){}
 };
 
 class Scanner {
