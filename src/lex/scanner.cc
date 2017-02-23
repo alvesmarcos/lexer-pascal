@@ -12,13 +12,18 @@ unsigned int line = 1;
 char buffer;
 bool is_buffer = false;
 
-inline bool IsKeyWord(const std::string& word) {
+bool IsKeyWord(const std::string& word) {
   if(word=="program" or word=="var" or word=="integer" or word=="real" or
      word=="boolean" or word=="procedure" or word=="begin" or word=="end" or
      word=="if" or word=="then" or word=="else" or word=="while" or
      word=="do" or word=="not") return true;
   else
     return false;
+}
+
+inline void SetBuffer(char ch){
+  buffer = ch;
+  is_buffer = true;
 }
 
 Scanner::Scanner(FILE* file): stream(file) {}
@@ -32,6 +37,11 @@ char Scanner::GetNextChar() {
   } else {
     return getc(this->stream);
   }
+}
+
+void Scanner::LexerError(std::string e) const {
+  fprintf(stderr, "\n@@ Lexer error message: %s\n", e.c_str());
+  // exit(1); opcional
 }
 
 void Scanner::PrintToken() const {
@@ -48,7 +58,7 @@ bool Scanner::ReadToken() {
 
   while(not done){
     char ch = GetNextChar();
-    // ignora linha | isspace() nao captura apenas espacos em brancos
+    // ignora linha | isspace() nao captura apenas espacos em branco
     while(ch==' ')
       ch = GetNextChar();
     // incrementa o contador de linhas
@@ -61,8 +71,8 @@ bool Scanner::ReadToken() {
         while(ch!='}'){
           ch = GetNextChar();
           if(ch==EOF){
-            is_buffer = true;
-            fprintf(stderr, "ERROR: Comentario esperado!\n");
+            SetBuffer(ch);
+            LexerError("unterminated comment miss '}'");
             break;
           }
         }
@@ -87,7 +97,7 @@ bool Scanner::ReadToken() {
         if(ch=='=' or (ch=='>' and lexeme=="<"))
           lexeme += ch;
         else
-          is_buffer = true;
+          SetBuffer(ch);
         this->token.push_back(Token{lexeme, line, Type::kRelOperator});
         break;
       }
@@ -101,7 +111,7 @@ bool Scanner::ReadToken() {
           this->token.push_back(Token{":=", line, Type::kCommand});
         } else {
           this->token.push_back(Token{":", line, Type::kDelimiter});
-          is_buffer = true;
+          SetBuffer(ch);
         }
         break;
       }
@@ -123,18 +133,34 @@ bool Scanner::ReadToken() {
           if(ch=='.') {
             number += ch;
             ch = GetNextChar();
-            if(not isdigit(ch)) return false;
+            if(not isdigit(ch))
+              LexerError("expected a digit after '.'");
             type = kRealLiteral;
-            is_buffer = true;
             do {
               number += ch;
               ch = GetNextChar();
             } while(isdigit(ch));
           }
           this->token.push_back(Token{number, line, type});
-          is_buffer = true;
+          SetBuffer(ch);
+
         } else if (isalpha(ch)) {
-          //TODO
+          Type type = Type::kIdentifier;
+          std::string word(1, ch);
+          ch = GetNextChar();
+
+          while(isalnum(ch) or ch=='_'){
+            word += ch;
+            ch = GetNextChar();
+          }
+          if(IsKeyWord(word))
+            type = Type::kKeyword;
+
+          this->token.push_back(Token{word, line, type});
+          SetBuffer(ch);
+
+        } else {
+          LexerError("unexpected token "+ch);
         }
       }
     }

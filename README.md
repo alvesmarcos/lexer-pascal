@@ -1,2 +1,2 @@
 # pascc
-A front-end pascal for the LLVM compiler
+Compiler pascc in C++ with LLVM

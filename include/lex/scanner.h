@@ -29,10 +29,12 @@ class Scanner {
   public:
     Scanner(FILE* file);
     ~Scanner();
-    // Abre arquivo e classifica o simbolo encontrado
-    bool ReadToken();
+    // Imprime uma mensagem de erro + string
+    void LexerError(std::string e) const;
     // Imprime todos os tokens do vector
     void PrintToken() const;
+    // Abre arquivo e classifica o simbolo encontrado
+    bool ReadToken();
   private:
     char GetNextChar();
     FILE *stream;
