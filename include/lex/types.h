@@ -13,6 +13,23 @@
 
 #include <map>
 
+namespace kw {
+  extern const std::string kProgram;
+  extern const std::string kVar;
+  extern const std::string kInteger;
+  extern const std::string kReal;
+  extern const std::string kBoolean;
+  extern const std::string kProcedure;
+  extern const std::string kBegin;
+  extern const std::string kEnd;
+  extern const std::string kIf;
+  extern const std::string kThen;
+  extern const std::string kElse;
+  extern const std::string kWhile;
+  extern const std::string kDo;
+  extern const std::string kNot;
+}
+
 enum Type {
   kKeyword,
   kIdentifier,

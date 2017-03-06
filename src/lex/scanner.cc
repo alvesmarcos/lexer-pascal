@@ -13,10 +13,10 @@ char buffer;
 bool is_buffer = false;
 
 bool IsKeyWord(const std::string& word) {
-  if(word=="program" or word=="var" or word=="integer" or word=="real" or
-     word=="boolean" or word=="procedure" or word=="begin" or word=="end" or
-     word=="if" or word=="then" or word=="else" or word=="while" or
-     word=="do" or word=="not") return true;
+  if(word==kw::kProgram or word==kw::kVar or word==kw::kInteger or word==kw::kReal or
+     word==kw::kBoolean or word==kw::kProcedure or word==kw::kBegin or word==kw::kEnd or
+     word==kw::kIf or word==kw::kThen or word==kw::kElse or word==kw::kWhile or
+     word==kw::kDo or word==kw::kNot) return true;
   else
     return false;
 }
