@@ -53,17 +53,14 @@ void Scanner::PrintToken() const {
   }
 }
 
-bool Scanner::ReadToken() {
+bool Scanner::BuildToken() {
   bool done = false;
 
   while(not done){
     char ch = GetNextChar();
     // ignora linha | isspace() nao captura apenas espacos em branco
-    while(ch==' ')
-      ch = GetNextChar();
-    // incrementa o contador de linhas
-    while(ch=='\n'){
-      ++line;
+    while(std::isspace(ch)){
+      if(ch=='\n') ++line;
       ch = GetNextChar();
     }
     switch (ch) {
@@ -121,12 +118,12 @@ bool Scanner::ReadToken() {
         break;
       }
       default: {
-        if(isdigit(ch)){
+        if(std::isdigit(ch)){
           Type type = Type::kIntLiteral;
           std::string number(1, ch);
           ch = GetNextChar();
 
-          while(isdigit(ch)){
+          while(std::isdigit(ch)){
             number += ch;
             ch = GetNextChar();
           }
@@ -144,12 +141,12 @@ bool Scanner::ReadToken() {
           this->token.push_back(Token{number, line, type});
           SetBuffer(ch);
 
-        } else if (isalpha(ch)) {
+        } else if (std::isalpha(ch)) {
           Type type = Type::kIdentifier;
           std::string word(1, ch);
           ch = GetNextChar();
 
-          while(isalnum(ch) or ch=='_'){
+          while(std::isalnum(ch) or ch=='_'){
             word += ch;
             ch = GetNextChar();
           }
