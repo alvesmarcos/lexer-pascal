@@ -1,10 +1,25 @@
-//============== scanner.cc - Implementacao ==============//
+// MIT License
 //
-//               The pascc compiler
+// Copyright (c) 2017 Marcos Henrique Alves da Silva
 //
-// Implementacao do arquivo /include/scanner.h
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
 //
-//============== -------------------------- ==============//
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+
 
 #include "../../include/lex/scanner.h"
 
@@ -13,10 +28,10 @@ char buffer;
 bool is_buffer = false;
 
 bool IsKeyWord(const std::string& word) {
-  if(word==kw::kProgram or word==kw::kVar or word==kw::kInteger or word==kw::kReal or
-     word==kw::kBoolean or word==kw::kProcedure or word==kw::kBegin or word==kw::kEnd or
-     word==kw::kIf or word==kw::kThen or word==kw::kElse or word==kw::kWhile or
-     word==kw::kDo or word==kw::kNot) return true;
+  if(word==kProgram or word==kVar or word==kInteger or word==kReal or word==kBoolean or
+     word==kProcedure or word==kBegin or word==kEnd or word==kIf or word==kThen or
+     word==kElse or word==kWhile or word==kDo or word==kNot)
+     return true;
   else
     return false;
 }
@@ -39,17 +54,24 @@ char Scanner::GetNextChar() {
   }
 }
 
+Token Scanner::GetNextToken() {
+  Token t = this->queue_token.front();
+  this->queue_token.pop();
+  return t;
+}
+
 void Scanner::LexerError(std::string e) const {
   fprintf(stderr, "\n@@ Lexer error message: %s\n", e.c_str());
   // exit(1); opcional
 }
 
-void Scanner::PrintToken() const {
-  int len = token.size();
+void Scanner::PrintToken() {
+  int len = queue_token.size();
+  Token t;
 
-  for(int i = 0 ; i < len; ++i){
-    printf("Token category: %s \tLexeme: %s\tLine: %d\n", kGetStrType.at(token.at(i).type),
-          (token.at(i).lexeme).c_str(), token.at(i).line);
+  while(!this->queue_token.empty()){
+    t = GetNextToken();
+    printf("Token category: %s \tLexeme: %s\tLine: %d\n", kGetStrType.at(t.type), (t.lexeme).c_str(), t.line);
   }
 }
 
@@ -76,15 +98,15 @@ bool Scanner::BuildToken() {
         break;
       }
       case '+': case '-': {
-        this->token.push_back(Token{std::string(1, ch), line, Type::kAddOperator});
+        this->queue_token.push(Token{std::string(1, ch), line, Type::kAddOperator});
         break;
       }
       case '*': case '/': {
-        this->token.push_back(Token{std::string(1, ch), line, Type::kMulOperator});
+        this->queue_token.push(Token{std::string(1, ch), line, Type::kMulOperator});
         break;
       }
       case ';': case '.': case '(': case ')': {
-        this->token.push_back(Token{std::string(1, ch), line, Type::kDelimiter});
+        this->queue_token.push(Token{std::string(1, ch), line, Type::kDelimiter});
         break;
       }
       case '<':  case '>': {
@@ -95,25 +117,25 @@ bool Scanner::BuildToken() {
           lexeme += ch;
         else
           SetBuffer(ch);
-        this->token.push_back(Token{lexeme, line, Type::kRelOperator});
+        this->queue_token.push(Token{lexeme, line, Type::kRelOperator});
         break;
       }
       case '=': {
-        this->token.push_back(Token{"=", line, Type::kRelOperator});
+        this->queue_token.push(Token{"=", line, Type::kRelOperator});
         break;
       }
       case ':': {
         ch = GetNextChar();
         if(ch=='='){
-          this->token.push_back(Token{":=", line, Type::kCommand});
+          this->queue_token.push(Token{":=", line, Type::kCommand});
         } else {
-          this->token.push_back(Token{":", line, Type::kDelimiter});
+          this->queue_token.push(Token{":", line, Type::kDelimiter});
           SetBuffer(ch);
         }
         break;
       }
       case EOF: {
-        this->token.push_back(Token{"EOF", line, Type::kEOF});
+        this->queue_token.push(Token{"EOF", line, Type::kEOF});
         done = true;
         break;
       }
@@ -138,7 +160,7 @@ bool Scanner::BuildToken() {
               ch = GetNextChar();
             } while(isdigit(ch));
           }
-          this->token.push_back(Token{number, line, type});
+          this->queue_token.push(Token{number, line, type});
           SetBuffer(ch);
 
         } else if (std::isalpha(ch)) {
@@ -153,7 +175,7 @@ bool Scanner::BuildToken() {
           if(IsKeyWord(word))
             type = Type::kKeyword;
 
-          this->token.push_back(Token{word, line, type});
+          this->queue_token.push(Token{word, line, type});
           SetBuffer(ch);
 
         } else {

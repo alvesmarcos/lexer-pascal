@@ -1,2 +1,2 @@
 # pascc
-Compiler pascc in C++ with LLVM
+Compiler pascalzim written in C++
